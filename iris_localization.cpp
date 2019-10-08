@@ -253,51 +253,6 @@ int checkWidth(int width){
 }
 
 /**
- * @brief creo le directory presenti in inp_path all'interno di out_path e ritorno i rispettivi path (ritorno out_vec che contiene tali path). N.B.: valido per Utiris
- * @param inp_path path alla directory di input (in cui si trova il DB, in questo caso Utiris)
- * @param out_path path alla directory di output in cui andranno a crearsi tante dirs quante sono in inp_path
- * @return vector<string> out_vec contenente i path alle singole directory create
- */
-/*vector<string> create_dirs(char* inp_path, char* out_path){ // per Utiris_DB
-	vector<string> out_vec;
-	DIR *inp_dir; DIR *out_dir; DIR *eye_dir;
-	struct dirent *ent;
-	struct dirent *eye_file;
-	int check;
-	char filename[256]; char* extension; char file_n[256]; char eye_path[256];
-	if ((inp_dir = opendir(inp_path)) != NULL && (out_dir = opendir(out_path)) != NULL) {
-		while ((ent = readdir (inp_dir)) != NULL) {
-			if(ent->d_name[0] == '.') continue;
-			extension = ent->d_name;
-			strncpy(filename, out_path, sizeof(filename)); 			// non faccio controlli dkw
-			strncpy(file_n, inp_path, sizeof(file_n));
-			strncat(filename, extension, (sizeof(filename) - strlen(filename)));		// non faccio controlli dkw
-			strncat(file_n, extension, (sizeof(file_n) - strlen(file_n)));
-
-			check = mkdir(filename, 0777);
-			if(check){cout << "errore nella creazione della cartella " << ent->d_name << endl; break;}
-			strncat(file_n, "/", (sizeof(file_n) - strlen(file_n)));
-			eye_dir = opendir(file_n);
-			while ((eye_file = readdir (eye_dir)) != NULL){
-				if(eye_file->d_name[strlen(eye_file->d_name)-1] == 'G' || eye_file->d_name[strlen(eye_file->d_name)-1] == 'g'){		// controllo solo se è JPG ma per ora mi basta solo la G
-					strncpy(eye_path, file_n, sizeof(eye_path));
-					strncat(eye_path, eye_file->d_name, (sizeof(eye_path) - strlen(eye_path)));
-					string s(eye_path);
-					out_vec.push_back(s);
-					//cout<<eye_path<<endl;
-				}
-			}
-			closedir(eye_dir);
-		}
-		closedir(inp_dir);
-		closedir(out_dir); 
-	}
-	//print(out_vec);
-	return out_vec;
-}
-*/
-
-/**
  * @brief applicazione dell'operatore integro-differenziale di Daugman (vedi Krupicka e Daugman) in modalità LUA discretizzato per ottenere il contorno dell'iride (limbus)
  * @param img struct contenente matrici dei 3 canali (BGR), numero di colonne, numero di righe (width e height)
  * @param r_min raggio minimo preso in considerazione. Di norma equivale a height/4
