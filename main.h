@@ -1,4 +1,4 @@
-#include "multi_integro_diff.h"
+#include "iris_localization.h"
 #include "reflection_correction.h"
 #include "preprocessing.h"
 #include "normalization.h"
@@ -12,8 +12,25 @@
 using namespace cv;
 using namespace std;
 
+/**
+ * @file
+ * @brief main della segmentazione dell'iride
+ */
+
+/**
+ * @brief segmentazione per Utiris
+ * @param db_path path assoluto del database
+ * @param out_path path assoluto in cui verrà salvato l'output dell'algoritmo
+ */
 int run_Utiris(string db_path, string out_path);
 
+
+/**
+ * @brief segmentazione per MICHE
+ * @param db_path path assoluto del database
+ * @param out_path path assoluto in cui verrà salvato l'output dell'algoritmo
+ * @param haar_casc path assoluto del file .xml contenente il classificatore per Viola-Jones
+ */
 int run_MICHE(string db_path, string out_path, string haar_casc);
 
 int test();

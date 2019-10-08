@@ -16,11 +16,11 @@ using namespace std;
  * @brief individuazione dei riflessi e occlussioni
  */
 
-int drawRays(Mat* norm_img);
+void drawRays(Mat* norm_img);
 
 void initKernels();
 
-int initRayPos(Mat* normImg);
+void initRayPos(Mat* normImg, Mat* rayPos);
 
 double pixelConvolution(Mat* normImg, int x, int y, int ray);
 
@@ -28,7 +28,7 @@ Mat upperEyelidDetection(Mat* normImg, string path);
 
 vector<double> localMinima(vector<double> vec);
 
-vector<int> getXOutliers(vector<int>* vec_x, vector<int>* vec_y);
+void removeOutliers(vector<int>* vec_x, vector<int>* vec_y);
 
 Mat lowerEyelidDetection(Mat* normImg);
 

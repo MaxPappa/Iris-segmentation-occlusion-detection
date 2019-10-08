@@ -3,7 +3,7 @@
 Mat sobel;
 Mat horizontalK;	// kernel per i cambiamenti orizzontali
 Mat verticalK;		// kernel per i cambiamenti verticali
-Mat rayPos;
+//Mat rayPos;
 Mat mask;
 
 
@@ -12,7 +12,7 @@ Mat mask;
  *		centrale superiore, ovvero partendo da (x,y) = (width/2,0).
  * @param norm_img immagine normalizzata a singolo spettro (spettro rosso)
  */
-int drawRays(Mat* norm_img){
+void drawRays(Mat* norm_img){
 	int x1 = norm_img->cols/2;
 	int y1 = 0;
 	double l = norm_img->cols/4;
@@ -32,15 +32,17 @@ int drawRays(Mat* norm_img){
 		int y_p = y1 + sin(M_PI) * j;
 		norm_img->at<uchar>(y_p, x_p) = 160;
 	}
-	return 0;
 }
 
-
-int initRayPos(Mat* normImg){
+/**
+ * @brief viene segnata la posizione di tutti i pixel facenti parte dei 46 raggi precedentemente disegnati sull'immagine normalizzata
+ * @param normImg puntatore all'immagine normalizzata
+ * @param rayPos puntatore alla matrice in cui inserire le posizioni utilizzate dai punti sui 46 raggi
+ */
+void initRayPos(Mat* normImg, Mat* rayPos){
 		int x1 = normImg->cols/2;
 		int y1 = 0;
 		double l = normImg->cols/4;
-		rayPos = (Mat_<Point>(NUM_RAYS, l));
 		double step = M_PI / (NUM_RAYS-1);
 		int rays = 0;
 		for(double theta = 0; theta < M_PI; theta+=step){
@@ -49,7 +51,7 @@ int initRayPos(Mat* normImg){
 				h++;
 				int x_p = x1 + cos(theta) * j;
 				int y_p = y1 + sin(theta) * j;
-				rayPos.at<Point>(rays, h) = Point(x_p, y_p);
+				rayPos->at<Point>(rays, h) = Point(x_p, y_p);
 			}
 			rays++;
 		}
@@ -58,9 +60,8 @@ int initRayPos(Mat* normImg){
 			h++;
 			int x_p = x1 + cos(M_PI) * j;
 			int y_p = y1 + sin(M_PI) * j;
-			rayPos.at<Point>(rays, h) = Point(x_p, y_p);
+			rayPos->at<Point>(rays, h) = Point(x_p, y_p);
 		}
-	return 0;
 }
 
 /**
@@ -90,8 +91,13 @@ void initKernels(){
 
 
 /**
+ * @brief convoluzione con il kernel differenziale del pixel (x,y) del raggio numero ray disegnato precedentemente sull'immagine normalizzata normImg
  * @param normImg iride normalizzata
- * @param x
+ * @param x coordinata x del punto preso in considerazione sul raggio disegnato numero ray
+ * @param y coordinata y del punto preso in considerazione sul raggio disegnato numero ray
+ * @param ray numero del raggio disegnato (contati da destra verso sinistra)
+ * @return valore risultante dalla convoluzione del pixel (x,y) del raggio numero ray con il kernel differenziale, la formula è: sqrt(pow(horizontalVal, 2) + pow(verticalVal, 2)).
+ *		Si può anche fare un'approssimazione di questa formula, usando la seguente: abs(horizontalVal) + abs(verticalVal)
  */
 double pixelConvolution(Mat* normImg, int x, int y, int ray){
 	double horizontalVal = 0;
@@ -152,7 +158,9 @@ Mat upperEyelidDetection(Mat* normImg, string path){
 	GaussianBlur( upper, upperBlur, Size(41,41), 0, 0, BORDER_DEFAULT );
 	Mat upperEyelidMask = Mat(normImg->rows, normImg->cols, CV_8UC1, Scalar(255));
 	drawRays(&upper);
-	initRayPos(&upper);
+	double l_ray = normImg->cols/4;
+	Mat rayPos = (Mat_<Point>(NUM_RAYS, l_ray));
+	initRayPos(&upper, &rayPos);
 	initKernels();
 	vector<double> vals;
 	vector<uchar> maxPixels;
@@ -207,7 +215,7 @@ Mat upperEyelidDetection(Mat* normImg, string path){
 		upperBlur.at<uchar>(pt.y, pt.x) = 255;
 	}
 	if(!vec_x.empty() && !vec_y.empty()){
-		vector<int> indexes = getXOutliers(&vec_x, &vec_y);
+		removeOutliers(&vec_x, &vec_y);
 	}
 	vector<double> coeffs = polyfit(vec_x, vec_y, 3);
 	int x1 = upper.cols/2;
@@ -271,9 +279,10 @@ Mat upperEyelidDetection(Mat* normImg, string path){
 }
 
 
-/*
- * @param vec
- * @return minima è un vettore di double contenente tutti i valori che non 
+/**
+ * @brief filtro i valori che rappresentano dei minimi locali, in cui presi tre valori ho vec[i-1] > vec[i] < vec[i+1]
+ * @param vec vettore contenente i valori ottenuti dalla convoluzione dei raggi con il kernel gaussiano
+ * @return vettore contenente gli indici dei valori eliminati da vec
  */
 vector<double> localMinima(vector<double> vec){
 	vector<double> minima;
@@ -289,36 +298,41 @@ vector<double> localMinima(vector<double> vec){
 }
 
 /**
- * ritorna le posizioni degli outliers nel vettore delle X
+ * @brief elimino gli outliers (pixel i) in cui, presi tre pixel i-1, i, i+1 la posizione del pixel i ha la coordinata x[i-1] > x[i] < x[i+1]
+ *		oppure x[i-1] < x[i] > x[i+1], ovvero elimino tutti i pixel che hanno un incremento o decremento improvvisi sull'asse delle x. 
+ * 		Successivamente elimino anche i pixel in cui y[i-1] > y[i] < y[i+1] oppure y[i-1] < y[i] > y[i+1], ovvero che hanno improvvisi incrementi
+ *		o decrementi sull'asse delle y
+ * @param vec_x vettore contenente in posizione i il pixel i-esimo (quindi la posizione contiene un pixel in particolare, questo è necessario perché in vec_y è presente la rispettiva coordinata y)
+ * @param vec_y vettore contenente in posizione i il pixel i-esimo
  */
-vector<int> getXOutliers(vector<int>* vec_x, vector<int>* vec_y){
-	vector<int> indexes;
+void removeOutliers(vector<int>* vec_x, vector<int>* vec_y){
+	//vector<int> indexes;
 	int l = vec_y->size()/2;
 	for(int i = 1; i < vec_x->size()-1; i++){
 		if(vec_x->at(i-1) > vec_x->at(i) && vec_x->at(i) < vec_x->at(i+1)){
-			indexes.push_back(vec_x->at(i));
+		//	indexes.push_back(vec_x->at(i));
 			vec_x->erase(vec_x->begin()+i);
 			vec_y->erase(vec_y->begin()+i);
 		}
 		else if(vec_x->at(i-1) < vec_x->at(i) && vec_x->at(i) > vec_x->at(i+1)){
-			indexes.push_back(vec_x->at(i));
+		//	indexes.push_back(vec_x->at(i));
 			vec_x->erase(vec_x->begin()+i);
 			vec_y->erase(vec_y->begin()+i);
 		}
 	}
 	for(int i = 1; i < vec_y->size()-1; i++){
 		if(vec_y->at(i-1) > vec_y->at(i) && vec_y->at(i) < vec_y->at(i+1) && i > l){
-			indexes.push_back(vec_y->at(i));
+		//	indexes.push_back(vec_y->at(i));
 			vec_x->erase(vec_x->begin()+i);
 			vec_y->erase(vec_y->begin()+i);
 		}
 		else if(vec_y->at(i-1) < vec_y->at(i) && vec_y->at(i) > vec_y->at(i+1) && i <= l){
-			indexes.push_back(vec_x->at(i));
+			//indexes.push_back(vec_x->at(i));
 			vec_x->erase(vec_x->begin()+i);
 			vec_y->erase(vec_y->begin()+i);
 		}
 	}
-	return indexes;
+	//return indexes;
 }
 
 

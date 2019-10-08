@@ -47,9 +47,15 @@ struct results {
 
 uchar pixel_value(image* img, double angle, Point centro, int r);
 
+uchar pixel_value_multi(image* img, double angle, Point centro, int r, string col);
+
 int contour_sum(image* img, Point centro, int r);
 
+int contour_sum_multi(image* img, Point centro, int r, string col);
+
 vector<int> linear_integral_vector(image* img, Point centro, vector<int> radius_range);
+
+vector<int> linear_integral_vector_multi(image* img, Point centro, vector<int> radius_range, string col);
 
 pair<int,int> obtain_w_h(int cols, int rows);
 
@@ -58,6 +64,8 @@ pair<int,int> obtain_w_h_miche(int cols, int rows);
 int checkWidth(int width);
 
 results* apply_daugman_operator(image* img, int r_min, int r_max);
+
+results* apply_daugman_operator_multi(image* img, int r_min, int r_max);
 
 results* pupil_daugman_operator(Mat* img_red, int r_min, int r_max);
 
@@ -74,8 +82,6 @@ Mat pup_convolution(Mat* img_red, double sigma, vector<int>* line_int, vector<in
 Mat convolution(double sigma, vector<int>* line_int);
 
 double pixel_conv(vector<int>* line_int, vector<double>* kernel, int pos);
-
-//void create_dirs(string inp_dir, string out_dir);
 
 Mat binaryMask(Mat* src_image, int iris_r, Point iris_c, int pupil_r, Point pupil_c);
 
