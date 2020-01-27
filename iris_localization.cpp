@@ -193,8 +193,8 @@ uchar pupil_pixel_value(Mat* img_red, double angle, Point centro, int r){
  *		allo stesso modo e con width <= 256 (stesso discorso vale per l'height, ammesso che cols>=rows)
  */
 pair<int,int> obtain_w_h(int cols, int rows){
-	if(cols/256 <= 0) return pair<int,int>(0,0);
-	int h = cols/256;
+	if(cols/128 <= 0) return pair<int,int>(0,0);
+	int h = cols/128;
 	int k = h;
 	while(cols%k != 0 || rows%k != 0){
 		k--;

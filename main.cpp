@@ -27,7 +27,7 @@ int main(int argc, char *argv[]){
 	}
 	file.close();
 	int test_mode, i_db;
-	cout << "Insert 1 for test mode: ";
+	cout << "Insert 1 for test mode, 0 to proceed: ";
 	cin >> test_mode;
 	if(test_mode == 1){
 		test();
@@ -84,14 +84,11 @@ int run_Utiris(string db_path, string out_path){
 		image* img = (image*) calloc(1, sizeof(image));
 
 		Mat rid_blue, rid_green, rid_red;
-		resize(bgr[0], rid_blue, Size(width, height));
-		img->blue = &rid_blue;
-		resize(bgr[1], rid_green, Size(width, height));
-		img->green = &rid_green;
-		resize(bgr[2], rid_red, Size(width, height));
-		img->red = &rid_red;
-		img->cols = rid_blue.cols;
-		img->rows = rid_blue.rows;
+		img->blue = &bgr[0];
+		img->green = &bgr[1];
+		img->red = &bgr[2];
+		img->cols = bgr[0].cols;
+		img->rows = bgr[0].rows;
 		
 		results* res =  apply_daugman_operator( img, r_min, r_max);
 
@@ -100,7 +97,7 @@ int run_Utiris(string db_path, string out_path){
 		circle(img_color, center, new_radius, Scalar(0,0,255), 3);
 		printf("value = %f, radius = %d, center(x,y) = %d,%d \n", res->value, res->radius, res->center.x, res->center.y);
 		
-		int r_pup_min = res->radius / 4;
+		int r_pup_min = res->radius / 5;
 		if( r_pup_min == 0 ) r_pup_min = 1;
 		int r_pup_max = res->radius * 0.85;
 		cout << "r_pup_min = " << r_pup_min << ", r_pup_max = "  << r_pup_max << endl;
@@ -157,7 +154,7 @@ int run_Utiris(string db_path, string out_path){
 			revUpper.at<Vec3b>(j,ind) = normResized_new.at<Vec3b>(j,ind-normResized_new.cols/2);
 		}
 	}
-		Mat upperEyelidMask = upperEyelidDetection(&norm_bgr[2], out_path+destinazione2);
+		Mat upperEyelidMask = upperEyelidDetection(&norm_bgr[2], out_path+destinazione+"/"+name);
 		Mat lowerEyelidMask = lowerEyelidDetection(&norm_bgr[2]);
 		Mat ultimateMask = Mat(lowerEyelidMask.rows, lowerEyelidMask.cols, CV_8UC1, Scalar(255));
 		Mat reflectionMask = threshReflectionDetection(&norm_bgr[0], 5, -15);
@@ -460,9 +457,6 @@ int run_MICHE(string db_path, string out_path, string haar_casc){
 		map<string, Point> mappa;
 		Mat out_img = normalizza(&imgToNorm, new_radius, center.x, center.y, radius_pup, center_pup.x, center_pup.y, &mappa);
 
-		string destinazione2 = vec_paths[i].substr(vec_paths[i].length()-20, vec_paths[i].length()-1);
-		string folder = destinazione2.substr(1, 3);
-		cout << destinazione2 << endl;
 		cout << vec_paths[i] << endl;
 		Mat norm_bgr[3];
 		split(out_img, norm_bgr);

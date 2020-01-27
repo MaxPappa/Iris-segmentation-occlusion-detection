@@ -20,7 +20,7 @@
 #include <string.h>
 #include <stdlib.h>
 
-#define DELTA_R 11
+#define DELTA_R 7
 #define DELTA_PUP 5
 #define SIGMA -1
 
