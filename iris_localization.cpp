@@ -261,7 +261,7 @@ int checkWidth(int width){
  * 		ottiene in base ai vari raggi e punti centrali presi in considerazione
  */
 results* apply_daugman_operator(image* img, int r_min, int r_max){
-	double sigma = 0.5;
+	double sigma = SIGMA;
 	int rows = img->rows;
 	int cols = img->cols;
 	results* res = (results*) calloc(1, sizeof(results));
@@ -352,7 +352,7 @@ Mat convolution(double sigma, vector<int>* line_int){
  * 		ottiene in base ai vari raggi e punti centrali presi in considerazione
  */
 results* pupil_daugman_operator(Mat* img_red, int r_min, int r_max){
-	double sigma = 0.5;
+	double sigma = SIGMA;
 	int rows = img_red->rows;
 	int cols = img_red->cols;
 	results* res = (results*) calloc(1, sizeof(results));
@@ -369,18 +369,18 @@ results* pupil_daugman_operator(Mat* img_red, int r_min, int r_max){
 			if( find(line_int.begin(), line_int.end(), 0) != line_int.end() ){
 				int addr = getIndexOfZeros(line_int);	// ottengo l'indirizzo in line_int che contiene il primo zero. Serve per ottenere una slice utilizzabile di line_int, perché è possibile che
 														// per alcuni raggi il cerchio con centro x,y esca fuori, ma questo non sempre vale per tutti i raggi con tale centro
-				if( addr == 0 || addr < DELTA_R +1 ) continue;	// se l'indirizzo è minore di DELTA_R+1, significa che ci sono meno di DELTA_R+1 valori utilizzabili in line_int, e quindi
+				if( addr == 0 || addr < DELTA_PUP +1 ) continue;	// se l'indirizzo è minore di DELTA_R+1, significa che ci sono meno di DELTA_R+1 valori utilizzabili in line_int, e quindi
 															  	// il kernel non può scorrere per n-k e/o n-k-1
 				vector<int> new_line_int = slice(line_int, 0, addr);	// ottengo la slice utilizzabile
 				convolved = pup_convolution(img_red, sigma, &new_line_int, radius_range, centro);		// applico la convoluzione per pupilla
 				double val = 0;
 				// in convolved ho n valori quanti sono i raggi, ma gli ultimi (delta_r/2)*2 non sono utilizzabili (all'indice 0 corrisponde il primo elemento utile, a (delta_r/2)*2-1 l'ultimo utile)
 				// perché non prendo i raggi troppo a sinistra e troppo a destra (dove non posso applicare la convoluzione con kernel
-				for( int ind = 0; ind < convolved.cols-((DELTA_R/2)*2)-1; ind++ ){
+				for( int ind = 0; ind < convolved.cols-((DELTA_PUP/2)*2)-1; ind++ ){
 					val = abs(convolved.at<double>(0, ind) - convolved.at<double>(1, ind))/DELTA_R;	// per ogni valore in convoluzione, faccio abs(conv(n-k) - conv(n-k-1))/delta_r
 					if( val > max ){		// sostituisco il valore ( e lo valuto come possibile candidato limbus ) solo se è quello con valore maggiore (vedi operatore di Daugman)
 						max = val;
-						res->radius = radius_range[ind+(DELTA_R/2)+1];
+						res->radius = radius_range[ind+(DELTA_PUP/2)+1];
 						res->center = centro;
 						res->value = val;
 					}
@@ -391,11 +391,11 @@ results* pupil_daugman_operator(Mat* img_red, int r_min, int r_max){
 				double val = 0;
 				// in convolved ho n valori quanti sono i raggi, ma gli ultimi (delta_r/2)*2 non sono utilizzabili (all'indice 0 corrisponde il primo elemento utile, a (delta_r/2)*2-1 l'ultimo utile)
 				// perché non prendo i raggi troppo a sinistra e troppo a destra (dove non posso applicare la convoluzione con kernel
-				for( int ind = 0; ind < convolved.cols-((DELTA_R/2)*2)-1; ind++ ){
+				for( int ind = 0; ind < convolved.cols-((DELTA_PUP/2)*2)-1; ind++ ){
 					val = abs(convolved.at<double>(0, ind) - convolved.at<double>(1, ind))/DELTA_R;	// per ogni valore in convoluzione, faccio abs(conv(n-k) - conv(n-k-1))/delta_r
 					if( val > max ){		// sostituisco il valore ( e lo valuto come possibile candidato limbus ) solo se è quello con valore maggiore (vedi operatore di Daugman)
 						max = val;
-						res->radius = radius_range[ind+(DELTA_R/2)+1];
+						res->radius = radius_range[ind+(DELTA_PUP/2)+1];
 						res->center = centro;
 						res->value = val;
 					}
@@ -420,12 +420,12 @@ results* pupil_daugman_operator(Mat* img_red, int r_min, int r_max){
  *		sul valore in posizione pos del vettore dell'integrale lineare. La prima riga è per n-k (vedi Daugman discretizzato), la seconda riga è per n-k-1
  */
 Mat pup_convolution(Mat* img_red, double sigma, vector<int>* line_int, vector<int> radius_range, Point centro){
-	vector<double> kernel = getGaussianKernel(DELTA_R, sigma);	// creo il 1-D gaussian Kernel. La funzione ritorna un DELTA_R X 1 Mat, ma facendo cast a vector, diventa vetctor 1xDELTA_R
+	vector<double> kernel = getGaussianKernel(DELTA_PUP, sigma);	// creo il 1-D gaussian Kernel. La funzione ritorna un DELTA_R X 1 Mat, ma facendo cast a vector, diventa vetctor 1xDELTA_R
 	int li_size = line_int->size();
 	Mat target(2, li_size, CV_64F);
 	int l = 0;
 	double value; int divider;
-	for( int pos = DELTA_R/2+1; pos < li_size-DELTA_R/2; pos++ ){// non prendo come centro i raggi che farebbero andare troppo a sinistra o troppo a destra i valori del kernel (i lati escono dal range)
+	for( int pos = DELTA_PUP/2+1; pos < li_size-DELTA_PUP/2; pos++ ){// non prendo come centro i raggi che farebbero andare troppo a sinistra o troppo a destra i valori del kernel (i lati escono dal range)
 		value = pixel_conv(line_int, &kernel, pos);
 		divider = pup_contour_divider(img_red, radius_range, pos-2, centro);
 		value = value / ((double)divider);
@@ -599,7 +599,7 @@ vector<int> linear_integral_vector_multi(image* img, Point centro, vector<int> r
  */
 results* apply_daugman_operator_multi(image* img, int r_min, int r_max){
 	//cout << "inizia" << endl;
-	double sigma = 0.5;
+	double sigma = SIGMA;
 	int rows = img->rows;
 	int cols = img->cols;
 	results* res = (results*) calloc(1, sizeof(results));

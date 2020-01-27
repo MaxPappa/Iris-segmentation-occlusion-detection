@@ -20,7 +20,9 @@
 #include <string.h>
 #include <stdlib.h>
 
-#define DELTA_R 5
+#define DELTA_R 11
+#define DELTA_PUP 5
+#define SIGMA -1
 
 using namespace cv;
 using namespace std;

@@ -8,6 +8,11 @@
 #include <ctime>
 #include <string.h>
 #include <vector>
+#include <fstream>
+#include <stdio.h>
+
+
+#define INIT "./init.txt"
 
 using namespace cv;
 using namespace std;
@@ -33,7 +38,11 @@ int run_Utiris(string db_path, string out_path);
  */
 int run_MICHE(string db_path, string out_path, string haar_casc);
 
+int run_NORefl(string db_path, string out_path);
+
 int test();
+
+int test_miche();
 
 /**
  * @brief creo le directory presenti in inp_path all'interno di out_path e ritorno i rispettivi path (ritorno out_vec che contiene tali path). N.B.: valido per Utiris

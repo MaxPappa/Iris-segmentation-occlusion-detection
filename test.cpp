@@ -1,6 +1,28 @@
 #include "test.h"
 
 
+double pearson(Mat* maskX, Mat* maskY){
+	// convert data-type to "float"
+	Mat im_float_1;
+	maskX->convertTo(im_float_1, CV_32F);
+	Mat im_float_2;
+	maskY->convertTo(im_float_2, CV_32F);
+
+	int n_pixels = im_float_1.rows * im_float_1.cols;
+
+	// Compute mean and standard deviation of both images
+	Scalar im1_Mean, im1_Std, im2_Mean, im2_Std;	
+	meanStdDev(im_float_1, im1_Mean, im1_Std);
+	meanStdDev(im_float_2, im2_Mean, im2_Std);
+
+	// Compute covariance and correlation coefficient
+	double covar = (im_float_1 - im1_Mean).dot(im_float_2 - im2_Mean) / n_pixels;
+	double correl = covar / (im1_Std[0] * im2_Std[0]);
+	cout << correl << endl;
+	return correl;
+}
+
+ 
 /**
  * @brief calcolo del Recall
  * @param GTmask maschera Ground Truth
@@ -107,7 +129,7 @@ vector<string> getFileNames(char* inp_path){
 		while ((ent = readdir (inp_dir)) != NULL) {
 			if(ent->d_name[0] == '.') continue;
 			extension = ent->d_name;
-			if(ent->d_name[strlen(ent->d_name)-1] == 'G' || ent->d_name[strlen(ent->d_name)-1] == 'g'){		// controllo solo se è JPG ma per ora mi basta solo la G
+			if(ent->d_name[strlen(ent->d_name)-1] == 'G' || ent->d_name[strlen(ent->d_name)-1] == 'g' || ent->d_name[strlen(ent->d_name)-1] == 'f'){		// controllo solo se è JPG ma per ora mi basta solo la G
 				out_vec.push_back(ent->d_name);
 			}
 		}

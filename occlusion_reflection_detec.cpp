@@ -358,9 +358,9 @@ Mat lowerEyelidDetection(Mat* normImg){
 	cout << "mean = " << mean << ", stdDev = " << stdDev << ", threshold = " << threshold << endl;
 	if(stdDev > mean/4){
 		//uchar threshold = (uchar)(mean + stdDev/2);
-		for(int y = 0; y < normImg->rows; y++){
+		for(int y = 0; y < normImg->rows/2; y++){
 			for(int x = 0; x < normImg->cols; x++){
-				if(normImg->at<uchar>(y,x) > threshold)
+				if(((int)normImg->at<uchar>(y,x)) > threshold)
 					lowerEyelidMask.at<uchar>(y,x) = 0;
 			}
 		}
@@ -378,7 +378,9 @@ Mat lowerEyelidDetection(Mat* normImg){
  */
 Mat threshReflectionDetection(Mat* normImg, int ksize, double c){
 	Mat reflectionMask;
-	adaptiveThreshold(*normImg, reflectionMask, 255, ADAPTIVE_THRESH_GAUSSIAN_C, THRESH_BINARY, ksize, c);
+	//GaussianBlur(*normImg, reflectionMask, Size(3,3), 0, 0);
+	threshold(*normImg, reflectionMask, 200, 255, THRESH_BINARY);
+	//adaptiveThreshold(reflectionMask, reflectionMask, 255, ADAPTIVE_THRESH_GAUSSIAN_C, THRESH_BINARY, ksize, c);
 	return reflectionMask;
 }
 
