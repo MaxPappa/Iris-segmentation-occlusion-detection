@@ -1,24 +1,9 @@
 #include <opencv2/imgproc.hpp>
 #include <opencv2/opencv.hpp>
-#include <math.h>
-#include <cmath>
-#include <algorithm>
 #include <vector>
-#include <assert.h>
 #include <numeric>
-#include <tuple>
-#include "reflection_correction.h"
-#include "preprocessing.h"
-#include "normalization.h"
-#include "test.h"
-#include "occlusion_reflection_detec.h"
-#include <chrono>
-#include <ctime>
-#include <dirent.h>
 #include <sys/stat.h>
-#include <stdio.h>
 #include <string.h>
-#include <stdlib.h>
 
 #define DELTA_R 7
 #define DELTA_PUP 5

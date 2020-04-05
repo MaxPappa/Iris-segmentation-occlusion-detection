@@ -11,6 +11,7 @@
  * @return vettore di double contenente n+1 coefficienti utilizzati per il polynomial fitting
  */
 vector<double> polyfit(vector<int> x, vector<int> y, int n){
+    ofstream log; log.open("./log.txt", std::ios_base::app);
     int i,j,k,N;
     N = x.size();
     double X[2*n+1];                        //Array that will store the values of sigma(xi),sigma(xi^2),sigma(xi^3)....sigma(xi^2n)
@@ -34,12 +35,12 @@ vector<double> polyfit(vector<int> x, vector<int> y, int n){
     for (i=0;i<=n;i++)
         B[i][n+1]=Y[i];                //load the values of Y as the last column of B(Normal Matrix but augmented)
     n=n+1;                //n is made n+1 because the Gaussian Elimination part below was for n equations, but here n is the degree of polynomial and for n degree we get n+1 equations
-    cout<<"\nThe Normal(Augmented Matrix) is as follows:\n";    
+    log<<"\nThe Normal(Augmented Matrix) is as follows:\n";    
     for (i=0;i<n;i++)            //print the Normal-augmented matrix
     {
         for (j=0;j<=n;j++)
-            cout<<B[i][j]<<setw(16);
-        cout<<"\n";
+            log<<B[i][j]<<setw(16);
+        log<<"\n";
     }    
     for (i=0;i<n;i++)                    //From now Gaussian Elimination starts(can be ignored) to solve the set of linear equations (Pivotisation)
         for (k=i+1;k<n;k++)
@@ -66,13 +67,13 @@ vector<double> polyfit(vector<int> x, vector<int> y, int n){
                 a[i]=a[i]-B[i][j]*a[j];
         a[i]=a[i]/B[i][i];            //now finally divide the rhs by the coefficient of the variable to be calculated
     }
-    cout<<"\nThe values of the coefficients are as follows:\n";
+    log<<"\nThe values of the coefficients are as follows:\n";
     for (i=0;i<n;i++)
-        cout<<"x^"<<i<<"="<<a[i]<<endl;            // Print the values of x^0,x^1,x^2,x^3,....    
-    cout<<"\nHence the fitted Polynomial is given by:\ny=";
+        log<<"x^"<<i<<"="<<a[i]<<endl;            // Print the values of x^0,x^1,x^2,x^3,....    
+    log<<"\nHence the fitted Polynomial is given by:\ny=";
     for (i=0;i<n;i++)
-        cout<<" + ("<<a[i]<<")"<<"x^"<<i;
-    cout<<"\n";
+        log<<" + ("<<a[i]<<")"<<"x^"<<i;
+    log<<"\n";
     vector<double> coeffs;
     for(i=0;i<n;i++)
         coeffs.push_back(a[i]);

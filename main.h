@@ -2,6 +2,7 @@
 #include "reflection_correction.h"
 #include "preprocessing.h"
 #include "normalization.h"
+#include "eye_localization.h"
 #include "test.h"
 #include "occlusion_reflection_detec.h"
 #include <chrono>
@@ -36,7 +37,7 @@ int run_Utiris(string db_path, string out_path);
  * @param out_path path assoluto in cui verrà salvato l'output dell'algoritmo
  * @param haar_casc path assoluto del file .xml contenente il classificatore per Viola-Jones
  */
-int run_MICHE(string db_path, string out_path, string haar_casc);
+int run_MICHE(string db_path, string out_path, string haar_casc, int resumeKey);
 
 int run_NORefl(string db_path, string out_path);
 
@@ -50,4 +51,4 @@ int test_miche();
  * @param out_path path alla directory di output in cui andranno a crearsi tante dirs quante sono in inp_path
  * @return vector<string> out_vec contenente i path alle singole directory create
  */
-vector<string> create_dirs(string inp_path, string out_path);
+vector<string> create_dirs(string inp_path, string out_path, int resumeKey);

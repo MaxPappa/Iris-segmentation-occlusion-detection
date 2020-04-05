@@ -85,8 +85,8 @@ void initKernels(){
 		verticalK = (Mat_<double>(3,3) << 1, 1, 1, 0, 0, 0, -1, -1, -1);	// prewitt 3x3
 		
 	}
-	cout << "vertical = " << verticalK << endl;
-	cout << "horizontal =" << horizontalK << endl;
+	//cout << "vertical = " << verticalK << endl;
+	//cout << "horizontal =" << horizontalK << endl;
 }	
 
 
@@ -290,7 +290,7 @@ vector<double> localMinima(vector<double> vec){
 	for(int i = 1; i < vec.size()-1; i++){
 		v1 = vec[i-1]; v2 = vec[i+1];
 		if( v1 > vec[i] && vec[i] < v2){
-			cout << vec[i] << endl;
+			//cout << vec[i] << endl;
 			minima.push_back(i);
 		}
 	}
@@ -343,6 +343,8 @@ void removeOutliers(vector<int>* vec_x, vector<int>* vec_y){
  * @return lowerEyelidMask è la maschera di individuazione della palpebra inferiore
  */
 Mat lowerEyelidDetection(Mat* normImg){
+	ofstream log;
+	log.open("./log.txt", std::ios_base::app);
 	Mat lowerEyelidMask = Mat(normImg->rows, normImg->cols, CV_8UC1, Scalar(255));
 	Mat meanMat, stdDevMat;
 	Mat mask = Mat::zeros(normImg->rows, normImg->cols, CV_8UC1);
@@ -355,7 +357,7 @@ Mat lowerEyelidDetection(Mat* normImg){
 	double stdDev = stdDevMat.at<double>(0,0);
 	double mean = meanMat.at<double>(0,0);
 	int threshold = (int)(mean + stdDev);
-	cout << "mean = " << mean << ", stdDev = " << stdDev << ", threshold = " << threshold << endl;
+	log << "mean = " << mean << ", stdDev = " << stdDev << ", threshold = " << threshold << endl;
 	if(stdDev > mean/4){
 		//uchar threshold = (uchar)(mean + stdDev/2);
 		for(int y = 0; y < normImg->rows/2; y++){
@@ -365,6 +367,7 @@ Mat lowerEyelidDetection(Mat* normImg){
 			}
 		}
 	}
+	log.close();
 	return lowerEyelidMask;
 }
 
