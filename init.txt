@@ -1,3 +1,3 @@
-Out_Path=INSERT HERE THE OUTPUT PATH
-DB_Path=INSERT HERE THE DATASET PATH
-Viola_Jones=INSERT HERE THE HAAR_CASCADE.XML FILE PATH
+Out_Path=/home/max/Desktop/Univ/Magistrale/Biometrics_Systems/Ubiris/nuova/
+DB_Path=/home/max/Desktop/Univ/Magistrale/Biometrics_Systems/MICHE_dataset/try/
+Viola_Jones=/home/max/Desktop/Univ/Magistrale/Biometrics_Systems/violajones/haarcascade.xml
