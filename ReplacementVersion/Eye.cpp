@@ -38,12 +38,19 @@ cv::Mat* Eye::getImgInp(){ return &(this->imgInp); }
 cv::Mat* Eye::getBlueSpec(){ return &(this->blueSpec); }
 cv::Mat* Eye::getGreenSpec(){ return &(this->greenSpec); }
 cv::Mat* Eye::getRedSpec(){ return &(this->redSpec); }
+cv::Mat* Eye::getBlueInp(){ return &(this->blueInp); }
+cv::Mat* Eye::getGreenInp(){ return &(this->greenInp); }
+cv::Mat* Eye::getRedInp(){ return &(this->redInp); }
 
 // setter
 void Eye::setMask(cv::Mat* mask){ this->mask = *mask;}
+void Eye::setImgInp(cv::Mat* imgInp){ this->imgInp = *imgInp; }
 void Eye::setBlueSpec(cv::Mat* spec){ this->blueSpec = *spec; }
 void Eye::setGreenSpec(cv::Mat* spec){ this->greenSpec = *spec; }
 void Eye::setRedSpec(cv::Mat* spec){ this->redSpec = *spec; }
+void Eye::setBlueInp(cv::Mat* specInp){ this->blueInp = *specInp; }
+void Eye::setGreenInp(cv::Mat* specInp){ this->greenInp = *specInp; }
+void Eye::setRedInp(cv::Mat* specInp){ this->redInp = *specInp; }
 void Eye::setIrisCenter(cv::Point center){ this->irisCenter = center; }
 void Eye::setIrisRadius(int radius){ this->irisRadius = radius; }
 void Eye::setIrisValue(double value){ this->irisValue = value; }
@@ -61,5 +68,4 @@ void Eye::resize(int width, int height)
     this->blueSpec = bgr[0];
     this->greenSpec = bgr[1];
     this->redSpec = bgr[2];
-    // not sure about that ^
-}   // Ok, yes, this is the problem.
+}

@@ -2,7 +2,6 @@
 #include <boost/filesystem.hpp>
 #include <opencv2/core/mat.hpp>
 #include "Eye.hpp"
-#include "utils.hpp"
 #include "Preprocessing.hpp"
 #include "Segmentation.hpp"
 #include <iostream>

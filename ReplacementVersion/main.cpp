@@ -9,7 +9,7 @@ int main()
     */
     vector<boost::filesystem::path> ret;
     string ext{".JPG"};
-    string path{"/home/max/Desktop/Univ/Magistrale/Biometrics_Systems/Utiris_inpout/RGB_Images/001/"};
+    string path{"/home/max/Desktop/Univ/Magistrale/Biometrics_Systems/Utiris_inpout/RGB_Images/002/"};
     boost::filesystem::path root{path}; // root folder of the dataset
     get_all(root, ext, ret);
 

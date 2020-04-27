@@ -19,9 +19,9 @@ uchar Segmentation::pixelValue(Eye* eye, double angle, cv::Point center, int r)
 {
 	int x = round(r * cos(angle) + center.x);
 	int y = round(r * sin(angle) + center.y);
-	uchar valueBlue = round(eye->getBlueSpec()->at<uchar>(y,x) * 0.114); // 0.114 is the percentage of perception of the blue spec at the human eye
-	uchar valueGreen = round(eye->getGreenSpec()->at<uchar>(y,x) * 0.587); // 0.587 same but for green spec
-	uchar valueRed = round(eye->getRedSpec()->at<uchar>(y,x) * 0.299); // 0.299 same but for red spec
+	uchar valueBlue = round(eye->getBlueInp()->at<uchar>(y,x) * 0.114); // 0.114 is the percentage of perception of the blue spec at the human eye
+	uchar valueGreen = round(eye->getGreenInp()->at<uchar>(y,x) * 0.587); // 0.587 same but for green spec
+	uchar valueRed = round(eye->getRedInp()->at<uchar>(y,x) * 0.299); // 0.299 same but for red spec
 	return valueBlue+valueGreen+valueRed;
 }
 
@@ -40,8 +40,8 @@ std::vector<int> Segmentation::linearIntegVec(Eye* eye, cv::Point center, std::v
 {
 	std::vector<int> lineIntegral;
 	for( int i = 0; i < radiusRange.size(); i++ ){					// ignoro l'arco superiore ( > 45° fino a < 135° ) poiché non viene considerato all'interno del calcolo di integrale lineare
-		//int p1_y = radius_range[i] * sin(2*M_PI/8) + centro.y;		// quindi prendo le coordinate y estreme ( a 45° e a 135° ) che mi consentono di calcolare l'integrale anche se la circonferenza
-		//int p2_y = radius_range[i] * sin((2*M_PI*3)/8) + centro.y;	// non include l'arco superiore nell'immagine
+		//int p1_y = radiusRange[i] * sin(2*M_PI/8) + center.y;		// quindi prendo le coordinate y estreme ( a 45° e a 135° ) che mi consentono di calcolare l'integrale anche se la circonferenza
+		//int p2_y = radiusRange[i] * sin((2*M_PI*3)/8) + center.y;	// non include l'arco superiore nell'immagine
 		if( center.x - radiusRange[i] < 0 || center.x + radiusRange[i] > eye->getImgWidth() || center.y + radiusRange[i] > eye->getImgHeight() || (center.y - radiusRange[i]) < 0 ) // oppure  p1_y < 0 || p2_y < 0
 		{
 			lineIntegral.push_back(0);
@@ -70,8 +70,8 @@ void Segmentation::daugmanOperator(eEyePart eyePart)
     {
         for( int x = 0; x < cols; x++ )
         {
-            if( (y < (rows/2 - rows/4) || y > (rows/2 + rows/4)) && eyePart==pupil ) continue;
-			if( (x < (cols/2 - cols/4) || x > (cols/2 + cols/4)) && eyePart==pupil ) continue;
+           // if( (y < (rows/2 - rows/4) || y > (rows/2 + rows/4)) && eyePart==pupil ) continue;
+			//if( (x < (cols/2 - cols/4) || x > (cols/2 + cols/4)) && eyePart==pupil ) continue;
             double val = 0;
             cv::Point center(x,y);
             std::vector<int> lineInt = linearIntegVec(eye, center, radiusRange);
@@ -79,10 +79,10 @@ void Segmentation::daugmanOperator(eEyePart eyePart)
             {
                 int index = getIndexOfZeros(lineInt); // from utils.hpp
 
-                if( index == 0 || ((index < DELTA +1 && eyePart==iris) || (index < DELTA_PUP +1 && eyePart==pupil)) ) continue;
+                if( index == 0 || (index < DELTA +1 && eyePart==iris) ) continue;
 
                 std::vector<int> newLineInt = slice(lineInt, 0, index);
-                convolved = convolution(eye, &lineInt, eyePart, center, radiusRange);
+                convolved = convolution(eye, &newLineInt, eyePart, center, radiusRange);
                 
                 for( index = 0; index < convolved.cols - ((DELTA/2)*2)-1; index++)
                 {
@@ -128,7 +128,7 @@ cv::Mat Segmentation::convolution(Eye* eye, vector<int>* lineInt, eEyePart eyePa
 	double value;
 	for( int pos = DELTA/2+1; pos < li_size-DELTA/2; pos++ ){// non prendo come centro i raggi che farebbero andare troppo a sinistra o troppo a destra i valori del kernel (i lati escono dal range)
 		value = pixelConv(lineInt, &kernel, pos);
-		if( eyePart == pupil )
+		if( eyePart==pupil )
         {
             int divider = pupContourDivider(eye, radiusRange, pos-2, center);
 		    value = value / ((double)divider);
@@ -173,6 +173,6 @@ int Segmentation::pupContourDivider(Eye* eye, vector<int> radiusRange, int pos, 
 void Segmentation::run()
 {
     daugmanOperator(eEyePart{iris});
-    daugmanOperator(eEyePart{pupil});
+    //daugmanOperator(eEyePart{pupil});
 }
 

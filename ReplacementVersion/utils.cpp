@@ -18,14 +18,13 @@ void get_all(const path& root, const string& ext, vector<path>& ret)
 }
 
 pair<int,int> obtain_w_h(int cols, int rows){
-	cout << "in obtain_w_h, width è " << cols << " mentre height è " << rows << endl;
 	//if(cols/128 <= 0) return pair<int,int>(1,1);
-	int h = round(cols/128);
+	int h = cols/256;
 	int k = h;
 	while(cols%k != 0 || rows%k != 0){
 		k--;
 	}
-	pair<int,int> coppia(round(cols/k), round(rows/k));
+	pair<int,int> coppia(cols/k, rows/k);
 	return coppia;
 }
 
