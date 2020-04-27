@@ -20,6 +20,8 @@ class Eye
         cv::Mat imgInp;
         cv::Mat blueSpec, greenSpec, redSpec;
         cv::Mat blueInp, greenInp, redInp;
+        cv::Mat pupilROI;
+        int pupilLen;
 
     public:
         Eye(std::string eyePath);
@@ -47,6 +49,8 @@ class Eye
         cv::Mat* getBlueInp();
         cv::Mat* getGreenInp();
         cv::Mat* getRedInp();
+        cv::Mat* getPupilROI();
+        int getPupilLen();
 
         // setter
         void setMask(cv::Mat* mask);
@@ -63,4 +67,6 @@ class Eye
         void setBlueInp(cv::Mat* specInp);
         void setGreenInp(cv::Mat* specInp);
         void setRedInp(cv::Mat* specInp);
+        void setPupilROI(cv::Mat* pupilROI);
+        void setPupilLen(int len);
 };

@@ -44,7 +44,8 @@ int main()
 */
     cv::Mat immagine = *(irSe.getEye()->getEyeImgRes());
     cv::circle(immagine, irSe.getEye()->getIrisCenter(), irSe.getEye()->getIrisRadius(), cv::Scalar(0,0,255), 3);
-    
+    cv:circle(immagine, irSe.getEye()->getPupilCenter(), irSe.getEye()->getPupilRadius(), cv::Scalar(255,0,0), 3);
+
     cv::imshow("Image window", immagine);
     cv::waitKey(0);
     /*cv::imshow("Image window", *(irSe.getEye()->getEyeImgRes()));

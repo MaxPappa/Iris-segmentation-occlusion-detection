@@ -57,9 +57,10 @@ std::vector<int> Segmentation::linearIntegVec(Eye* eye, cv::Point center, std::v
 
 void Segmentation::daugmanOperator(eEyePart eyePart)
 {
-    int rows = eye->getImgHeight(); int cols = eye->getImgWidth();
+    int rows = (eyePart==iris ? eye->getImgHeight() : eye->getPupilLen());
+    int cols = (eyePart==iris ? eye->getImgWidth() : eye->getPupilLen());
 
-    std::vector<int> radiusRange(this->rMax-this->rMin+1);
+    std::vector<int> radiusRange = eyePart==iris ? std::vector<int>(this->rMax-this->rMin+1) : std::vector<int>(eye->getIrisRadius()*0.85, eye->getIrisRadius()/5);
     std::iota(begin(radiusRange), end(radiusRange), rMin);
     double candidateVal = 0;
     cv::Point candidateCenter;
@@ -113,9 +114,9 @@ void Segmentation::daugmanOperator(eEyePart eyePart)
         }
     }
     //convolved = 0;
-    eye->setIrisCenter(candidateCenter);
-    eye->setIrisRadius(candidateRay);
-    eye->setIrisValue(candidateVal);
+    eyePart == iris ? eye->setIrisCenter(candidateCenter) : eye->setPupilCenter(candidateCenter);
+    eyePart == iris ? eye->setIrisRadius(candidateRay) : eye->setPupilRadius(candidateRay);
+    eyePart == iris ? eye->setIrisValue(candidateVal) : eye->setPupilValue(candidateVal);
 }
 
 
@@ -170,9 +171,31 @@ int Segmentation::pupContourDivider(Eye* eye, vector<int> radiusRange, int pos, 
 	return sum;
 }
 
+void Segmentation::cropPupil(Eye* eye)
+{
+    try
+    {
+        cv::Point irisCenter = eye->getIrisCenter();
+        auto [xROI, yROI] = irisCenter;
+        std::cout << ("(xRoi,yRoi) = (") << xROI << "," << yROI << ")" << endl;
+        int edge = eye->getIrisRadius()*2;
+        std::cout << "edge = " << edge << std::endl;
+        eye->setPupilLen(edge);
+        CvRect roi = cvRect(xROI, yROI, edge, edge);
+        cv::Mat imgInp = *(eye->getImgInp());
+        cv::Mat pupilROI = imgInp(roi);
+        //eye->setPupilROI(&pupilROI);
+    }
+    catch(const std::exception& e)
+    {
+        std::cerr << e.what() << '\n';
+    }
+}
+
 void Segmentation::run()
 {
     daugmanOperator(eEyePart{iris});
-    //daugmanOperator(eEyePart{pupil});
+    cropPupil(eye);
+    daugmanOperator(eEyePart{pupil});
 }
 

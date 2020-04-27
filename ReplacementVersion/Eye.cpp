@@ -29,7 +29,7 @@ cv::Point Eye::getIrisCenter(){ return this->irisCenter; }
 int Eye::getPupilRadius(){ return this->pupilRadius; }
 double Eye::getPupilValue(){ return this->pupilValue; }
 cv::Point Eye::getPupilCenter(){ return this->pupilCenter; }
-
+int Eye::getPupilLen(){ return this->pupilLen; }
 
 cv::Mat* Eye::getEyeImg(){ return &(this->eyeImg); }
 cv::Mat* Eye::getEyeImgRes(){ return &(this->eyeImgRes); }
@@ -41,6 +41,7 @@ cv::Mat* Eye::getRedSpec(){ return &(this->redSpec); }
 cv::Mat* Eye::getBlueInp(){ return &(this->blueInp); }
 cv::Mat* Eye::getGreenInp(){ return &(this->greenInp); }
 cv::Mat* Eye::getRedInp(){ return &(this->redInp); }
+cv::Mat* Eye::getPupilROI(){ return &(this->pupilROI); }
 
 // setter
 void Eye::setMask(cv::Mat* mask){ this->mask = *mask;}
@@ -57,6 +58,8 @@ void Eye::setIrisValue(double value){ this->irisValue = value; }
 void Eye::setPupilCenter(cv::Point center){ this->pupilCenter = center; }
 void Eye::setPupilRadius(int radius){ this->pupilRadius = radius; }
 void Eye::setPupilValue(double value){ this->pupilValue = value; }
+void Eye::setPupilROI(cv::Mat* pupilROI){ this->pupilROI = *pupilROI; }
+void Eye::setPupilLen(int len){ this->pupilLen = len; }
 
 void Eye::resize(int width, int height)
 {

@@ -1,6 +1,7 @@
 #include "Eye.hpp"
 #include <numeric>
 #include "utils.hpp"
+#include <opencv2/core/types_c.h>
 
 #define DELTA_R 5
 #define DELTA_PUP 5
@@ -22,6 +23,7 @@ private:
     cv::Mat convolution(Eye* eye, vector<int>* lineInt, eEyePart eyePart, cv::Point center, std::vector<int> radiusRange);
     double pixelConv(vector<int>* lineInt, std::vector<double>* kernel, int pos);
     int pupContourDivider(Eye* eye, std::vector<int> radiusRange, int pos, cv::Point center);
+    void cropPupil(Eye* eye);
 
 public:
     Segmentation(Eye* eye);
