@@ -5,6 +5,8 @@
 #include "Preprocessing.hpp"
 #include "Segmentation.hpp"
 #include <iostream>
+#include <boost/timer/timer.hpp>
+
 
 class IrisSegm
 {

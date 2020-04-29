@@ -10,11 +10,11 @@ Eye::~Eye()
 {
     this->eyeImg.release();
     this->eyeImgRes.release();
-    this->mask.release();
     this->imgInp.release();
-    this->redSpec.release();
-    this->greenSpec.release();
-    this->blueSpec.release();
+    this->blueInp.release();
+    this->greenInp.release();
+    this->redInp.release();
+    this->pupilROI.release();
     std::cout << "every field of Eye object has been released" << std::endl;
 }
 
@@ -33,25 +33,19 @@ int Eye::getPupilLen(){ return this->pupilLen; }
 
 cv::Mat* Eye::getEyeImg(){ return &(this->eyeImg); }
 cv::Mat* Eye::getEyeImgRes(){ return &(this->eyeImgRes); }
-cv::Mat* Eye::getMask(){ return &(this->mask); }
 cv::Mat* Eye::getImgInp(){ return &(this->imgInp); }
-cv::Mat* Eye::getBlueSpec(){ return &(this->blueSpec); }
-cv::Mat* Eye::getGreenSpec(){ return &(this->greenSpec); }
-cv::Mat* Eye::getRedSpec(){ return &(this->redSpec); }
 cv::Mat* Eye::getBlueInp(){ return &(this->blueInp); }
 cv::Mat* Eye::getGreenInp(){ return &(this->greenInp); }
 cv::Mat* Eye::getRedInp(){ return &(this->redInp); }
 cv::Mat* Eye::getPupilROI(){ return &(this->pupilROI); }
 
-// setter
-void Eye::setMask(cv::Mat* mask){ this->mask = *mask;}
+// setter for Preprocessing
 void Eye::setImgInp(cv::Mat* imgInp){ this->imgInp = *imgInp; }
-void Eye::setBlueSpec(cv::Mat* spec){ this->blueSpec = *spec; }
-void Eye::setGreenSpec(cv::Mat* spec){ this->greenSpec = *spec; }
-void Eye::setRedSpec(cv::Mat* spec){ this->redSpec = *spec; }
 void Eye::setBlueInp(cv::Mat* specInp){ this->blueInp = *specInp; }
 void Eye::setGreenInp(cv::Mat* specInp){ this->greenInp = *specInp; }
 void Eye::setRedInp(cv::Mat* specInp){ this->redInp = *specInp; }
+
+// setter for Segmentation
 void Eye::setIrisCenter(cv::Point center){ this->irisCenter = center; }
 void Eye::setIrisRadius(int radius){ this->irisRadius = radius; }
 void Eye::setIrisValue(double value){ this->irisValue = value; }
@@ -66,15 +60,4 @@ void Eye::resize(int width, int height)
     std::cout << "width " << width << " , height " << height << std::endl;
     cv::resize((this->eyeImg), this->eyeImgRes, cv::Size(width, height));
     this->resWidth = width; this->resHeight = height;
-    cv::Mat bgr[3]; //= {this->blueSpec,this->greenSpec,this->redSpec};
-    cv::split(this->eyeImgRes, bgr);
-    this->blueSpec = bgr[0];
-    this->greenSpec = bgr[1];
-    this->redSpec = bgr[2];
 }
-
-// should look to a solution for this. Passing eEyePart to everything is a little bit weird and awfull to see.
-// in the same way, i can't use a method in the Eye object for everything, so i should be able to 
-// remove some Eye.methods creating something other in the method that need things returned by these methods.
-// This would result in a more clean header Eye.hpp, because for now, i'm creating a method every now and then i need something
-// from the Eye objects, also when that method is used only ONE time in the entirety of the project.

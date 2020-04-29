@@ -16,9 +16,7 @@ class Eye
         int pupilRadius; cv::Point pupilCenter; double pupilValue;
         cv::Mat eyeImg;
         cv::Mat eyeImgRes;  // same image as eyeImg but resized with the resize method
-        cv::Mat mask;
         cv::Mat imgInp;
-        cv::Mat blueSpec, greenSpec, redSpec;
         cv::Mat blueInp, greenInp, redInp;
         cv::Mat pupilROI;
         int pupilLen;
@@ -35,11 +33,7 @@ class Eye
         int getImgHeight();
         int getImgWidth();
         cv::Mat* getEyeImgRes();
-        cv::Mat* getMask();
         cv::Mat* getImgInp();
-        cv::Mat* getBlueSpec();
-        cv::Mat* getGreenSpec();
-        cv::Mat* getRedSpec();
         int getIrisRadius();
         double getIrisValue();
         cv::Point getIrisCenter();
@@ -53,11 +47,7 @@ class Eye
         int getPupilLen();
 
         // setter
-        void setMask(cv::Mat* mask);
         void setImgInp(cv::Mat* imgInp);
-        void setBlueSpec(cv::Mat* spec);
-        void setGreenSpec(cv::Mat* spec);
-        void setRedSpec(cv::Mat* spec);
         void setIrisRadius(int radius);
         void setIrisCenter(cv::Point center);
         void setIrisValue(double value);
