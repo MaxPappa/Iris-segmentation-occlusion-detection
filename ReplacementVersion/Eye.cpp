@@ -72,3 +72,9 @@ void Eye::resize(int width, int height)
     this->greenSpec = bgr[1];
     this->redSpec = bgr[2];
 }
+
+// should look to a solution for this. Passing eEyePart to everything is a little bit weird and awfull to see.
+// in the same way, i can't use a method in the Eye object for everything, so i should be able to 
+// remove some Eye.methods creating something other in the method that need things returned by these methods.
+// This would result in a more clean header Eye.hpp, because for now, i'm creating a method every now and then i need something
+// from the Eye objects, also when that method is used only ONE time in the entirety of the project.
