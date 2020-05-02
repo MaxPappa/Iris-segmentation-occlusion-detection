@@ -11,7 +11,7 @@ cv::Mat Preprocessing::searchReflection(Eye* eye, int ksize, double c)
 {
     cv::Mat mask;
     cv::Mat bgr[3];
-    cv::split(*(eye->getEyeImgRes()), bgr);
+    cv::split(*(eye->getEyeImg()), bgr);
 	cv::adaptiveThreshold(bgr[0], mask, 255, cv::ADAPTIVE_THRESH_GAUSSIAN_C, cv::THRESH_BINARY, ksize, c);
 	dilate(mask, mask, cv::Mat(), cv::Point(-1,-1), 2);
     return mask;
@@ -20,13 +20,13 @@ cv::Mat Preprocessing::searchReflection(Eye* eye, int ksize, double c)
 cv::Mat Preprocessing::inpaintReflection(cv::Mat mask, Eye* eye, int iterations)
 {
     cv::Mat imgInp; 
-    cv::inpaint(*(eye->getEyeImgRes()), mask, imgInp, iterations, cv::INPAINT_TELEA);
+    cv::inpaint(*(eye->getEyeImg()), mask, imgInp, iterations, cv::INPAINT_TELEA);
     return imgInp;
 }
 
 void Preprocessing::run()
 {
-    auto[width, height] = obtain_w_h(eye->getEyeImg()->cols, eye->getEyeImg()->rows);
+    auto[width, height] = obtain_w_h(eye->getImg()->cols, eye->getImg()->rows);
     eye->resize(width, height);
     int ksize = 3; double c = -20;
     cv::Mat mask = searchReflection(eye, ksize, c);

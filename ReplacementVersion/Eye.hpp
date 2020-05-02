@@ -6,6 +6,7 @@
 #include <opencv2/highgui/highgui.hpp>
 #include <string>
 #include <iostream>
+#include <map>
 
 class Eye
 {
@@ -14,12 +15,15 @@ class Eye
         int resWidth, resHeight; // width and height of the eyeImgRes (so dimensions post-resizing)
         int irisRadius; cv::Point irisCenter; double irisValue;
         int pupilRadius; cv::Point pupilCenter; double pupilValue;
-        cv::Mat eyeImg;
-        cv::Mat eyeImgRes;  // same image as eyeImg but resized with the resize method
+        cv::Mat img;
+        cv::Mat eyeImg;  // same image as eyeImg but resized with the resize method
         cv::Mat imgInp;
         cv::Mat blueInp, greenInp, redInp;
         cv::Mat pupilROI;
         int pupilLen;
+        cv::Mat normImg;
+        std::map<size_t, cv::Point> eyeCoords;
+        cv::Mat binMask;
 
     public:
         Eye(std::string eyePath);
@@ -29,10 +33,10 @@ class Eye
 
         // getter
         std::string getEyePath();
-        cv::Mat* getEyeImg();
+        cv::Mat* getImg();
         int getImgHeight();
         int getImgWidth();
-        cv::Mat* getEyeImgRes();
+        cv::Mat* getEyeImg();
         cv::Mat* getImgInp();
         int getIrisRadius();
         double getIrisValue();
@@ -45,6 +49,10 @@ class Eye
         cv::Mat* getRedInp();
         cv::Mat* getPupilROI();
         int getPupilLen();
+        cv::Mat* getNormImg();
+        std::map<size_t, cv::Point>* getEyeCoords();
+        cv::Mat* getBinMask();
+
 
         // setter
         void setImgInp(cv::Mat* imgInp);
@@ -59,4 +67,7 @@ class Eye
         void setRedInp(cv::Mat* specInp);
         void setPupilROI(cv::Mat* pupilROI);
         void setPupilLen(int len);
+        void setNormImg(cv::Mat* normImg);
+        void setEyeCoords(std::map<size_t, cv::Point>* coords);
+        void setBinMask(cv::Mat* binMask);
 };

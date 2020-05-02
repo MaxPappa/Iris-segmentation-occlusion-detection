@@ -12,7 +12,6 @@ Segmentation::~Segmentation(){ eye = 0; }
 // Getter
 int Segmentation::getRMax(){ return this->rMax;}
 int Segmentation::getRMin(){ return this->rMin;}
-Eye* Segmentation::getEye(){ return this->eye; }
 
 
 uchar Segmentation::pixelValue(Eye* eye, double angle, cv::Point center, int r, eEyePart eyePart)
@@ -85,11 +84,6 @@ void Segmentation::daugmanOperator(eEyePart eyePart)
     if(eyePart == iris)
         std::iota(begin(radiusRange), end(radiusRange), rMin);
     else std::iota(begin(radiusRange), end(radiusRange), eye->getIrisRadius()/5);
-    if(eyePart == pupil)
-    {
-        std::cout << "Here we have the radiusRange vector values" << std::endl;
-        for(int x : radiusRange) std::cout << x << std::endl;
-    }
     cv::Point candidateCenter;
     int candidateRay;
     cv::Mat convolved;
@@ -122,10 +116,6 @@ void Segmentation::daugmanOperator(eEyePart eyePart)
                         candidateVal = val;
                         candidateCenter = center;
                         candidateRay = radiusRange[index+(DELTA/2)+1];
-                        if( eyePart == pupil)
-                        {
-                            std::cout << boost::format("here we have pupVal = %1% , pupCenter = (%2%,%3%) , and pupRay = %4%\n") % candidateVal % candidateCenter.x % candidateCenter.y % candidateRay;
-                        }
                     }
                 }
             }
@@ -142,10 +132,6 @@ void Segmentation::daugmanOperator(eEyePart eyePart)
                         candidateVal = val;
                         candidateCenter = center;
                         candidateRay = radiusRange[index+(DELTA/2)+1];
-                        if( eyePart == pupil)
-                        {
-                            std::cout << boost::format("here we have pupVal = %1% , pupCenter = (%2%,%3%) , and pupRay = %4%\n") % candidateVal % candidateCenter.x % candidateCenter.y % candidateRay;
-                        }
                     }
                 }
             }

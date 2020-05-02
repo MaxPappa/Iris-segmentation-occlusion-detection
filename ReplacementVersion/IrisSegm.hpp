@@ -6,6 +6,8 @@
 #include "Segmentation.hpp"
 #include <iostream>
 #include <boost/timer/timer.hpp>
+#include "Normalization.hpp"
+#include "OcclusionDetector.hpp"
 
 
 class IrisSegm
