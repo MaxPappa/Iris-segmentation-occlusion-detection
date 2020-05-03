@@ -8,6 +8,7 @@
 #include <boost/timer/timer.hpp>
 #include "Normalization.hpp"
 #include "OcclusionDetector.hpp"
+#include <omp.h>
 
 
 class IrisSegm
