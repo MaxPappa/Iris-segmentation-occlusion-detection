@@ -4,7 +4,7 @@
 #include <opencv2/core/types_c.h>
 #include <boost/format.hpp>
 
-#define DELTA_R 5
+#define DELTA_R 7
 #define DELTA_PUP 5
 #define SIGMA -1
 

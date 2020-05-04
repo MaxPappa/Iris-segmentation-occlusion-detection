@@ -45,6 +45,8 @@ std::map<size_t, cv::Point>* Eye::getEyeCoords(){ return &(this->eyeCoords);}
 cv::Mat* Eye::getNormImg(){ return &(this->normImg); }
 cv::Mat* Eye::getBinMask(){ return &(this->binMask); }
 
+cv::Mat* Eye::getNormMask(){ return &(this->normMask); }
+
 // setter for Preprocessing
 void Eye::setImgInp(cv::Mat* imgInp){ this->imgInp = *imgInp; }
 void Eye::setBlueInp(cv::Mat* specInp){ this->blueInp = *specInp; }
@@ -66,6 +68,8 @@ void Eye::setNormImg(cv::Mat* normImg){ this->normImg = *normImg; }
 void Eye::setBinMask(cv::Mat* binMask){ this->binMask = *binMask; }
 
 void Eye::setEyeCoords(std::map<size_t, cv::Point>* eyeCoords){ this->eyeCoords = *eyeCoords; }
+
+void Eye::setNormMask(cv::Mat* normMask){ this->normMask = *normMask; }
 
 void Eye::resize(int width, int height)
 {

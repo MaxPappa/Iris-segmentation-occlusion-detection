@@ -12,7 +12,7 @@
 using namespace std;
 using namespace boost::filesystem;
 
-void get_all(const path& root, const string& ext, vector<path>& ret);
+void get_all(const boost::filesystem::path& root, const string& ext, vector<boost::filesystem::path>& ret, vector<std::string>& names);
 
 pair<int,int> obtain_w_h(int cols, int rows);
 

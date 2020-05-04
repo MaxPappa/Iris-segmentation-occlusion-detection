@@ -5,6 +5,8 @@
 
 #define NUM_RAYS 46
 #define KSIZE 3
+#define NORM_HEIGHT 100
+#define NORM_WIDTH 600
 
 class OcclusionDetector
 {
@@ -19,7 +21,7 @@ private:
     std::vector<double> localMinima(std::vector<double> vec);
     void removeOutliers(std::vector<int>* vec_x, std::vector<int>* vec_y);
     cv::Mat lowerEyelidDetection(cv::Mat* normRed);
-    cv::Mat threshReflectionDetection(cv::Mat* normBlue);
+    cv::Mat threshReflectionDetection(cv::Mat* normBluev);
     std::vector<double> polynomialRegression(std::vector<int> x, std::vector<int> y, int n);
 
     

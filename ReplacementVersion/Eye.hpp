@@ -24,6 +24,7 @@ class Eye
         cv::Mat normImg;
         std::map<size_t, cv::Point> eyeCoords;
         cv::Mat binMask;
+        cv::Mat normMask;
 
     public:
         Eye(std::string eyePath);
@@ -52,6 +53,7 @@ class Eye
         cv::Mat* getNormImg();
         std::map<size_t, cv::Point>* getEyeCoords();
         cv::Mat* getBinMask();
+        cv::Mat* getNormMask();
 
 
         // setter
@@ -70,4 +72,5 @@ class Eye
         void setNormImg(cv::Mat* normImg);
         void setEyeCoords(std::map<size_t, cv::Point>* coords);
         void setBinMask(cv::Mat* binMask);
+        void setNormMask(cv::Mat* normMask);
 };

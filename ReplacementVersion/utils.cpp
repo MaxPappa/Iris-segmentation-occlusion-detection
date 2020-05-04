@@ -2,7 +2,7 @@
 
 // return the filenames of all files that have the specified extension
 // in the specified directory and all subdirectories
-void get_all(const path& root, const string& ext, vector<path>& ret)
+void get_all(const boost::filesystem::path& root, const string& ext, vector<boost::filesystem::path>& ret, vector<std::string>& names)
 {
     if(!exists(root) || !is_directory(root)) return;
 
@@ -11,8 +11,10 @@ void get_all(const path& root, const string& ext, vector<path>& ret)
 
     while(it != endit)
     {
-        if(is_regular_file(*it) && it->path().extension() == ext)
+        if(is_regular_file(*it) && it->path().extension() == ext){
             ret.push_back(it->path().parent_path()/it->path().filename());
+			names.push_back(it->path().stem().string());
+		}
         ++it;
     }
 }

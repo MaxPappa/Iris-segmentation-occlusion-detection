@@ -3,8 +3,8 @@
 Segmentation::Segmentation(Eye* eye)
 {
     this->eye = eye;
-    this->rMin = round(eye->getImgHeight()/10);
-    this->rMax = round(eye->getImgHeight()/3);
+    this->rMin = round(eye->getImgHeight()/6);
+    this->rMax = round(eye->getImgHeight()/2);
 }
 
 Segmentation::~Segmentation(){ eye = 0; }
@@ -41,6 +41,7 @@ int Segmentation::contourSum(Eye* eye, cv::Point center, int r, eEyePart eyePart
         for(double angle = 0; angle <= 2*M_PI/8; angle+=theta){ sum += pixelValue(eye, angle, center, r, eyePart); } // from 0° to 45° 
 	    for(double angle = (2*M_PI*3)/8; angle <= (2*M_PI*5)/8; angle+=theta){ sum += pixelValue(eye, angle, center, r, eyePart); } // from 135° to 180°
 	    for(double angle = (2*M_PI*7)/8; angle <= 2*M_PI; angle+=theta){ sum += pixelValue(eye, angle, center, r, eyePart); } // from 270° to 360°
+        //for(double angle = (2*M_PI*3)/8; angle <= 2*M_PI; angle+=theta){ sum += pixelValue(eye, angle, center, r, eyePart); } // from 135° to 180°
     }
     else // eyePart == pupil
     {
@@ -80,7 +81,7 @@ void Segmentation::daugmanOperator(eEyePart eyePart)
     int rows = (eyePart==iris ? eye->getImgHeight() : eye->getPupilLen());
     int cols = (eyePart==iris ? eye->getImgWidth() : eye->getPupilLen());
 
-    std::vector<int> radiusRange = eyePart==iris ? std::vector<int>(this->rMax-this->rMin+1) : std::vector<int>(eye->getIrisRadius()*0.85 - eye->getIrisRadius()/5);
+    std::vector<int> radiusRange = eyePart==iris ? std::vector<int>(this->rMax-this->rMin+1) : std::vector<int>(round(eye->getIrisRadius()*0.85 - eye->getIrisRadius()/5));
     if(eyePart == iris)
         std::iota(begin(radiusRange), end(radiusRange), rMin);
     else std::iota(begin(radiusRange), end(radiusRange), eye->getIrisRadius()/5);
@@ -90,12 +91,14 @@ void Segmentation::daugmanOperator(eEyePart eyePart)
     const int DELTA = (eyePart==iris ? DELTA_R : DELTA_PUP);
     double max = 0;
     double candidateVal = 0;
+    int secR = rows/7; int secC = cols/7;
     for( int y = 0; y < rows; y++ )
     {
         for( int x = 0; x < cols; x++ )
         {
-            if( (y < (rows/2 - rows/4) || y > (rows/2 + rows/4)) && eyePart==pupil ) continue;
-			if( (x < (cols/2 - cols/4) || x > (cols/2 + cols/4)) && eyePart==pupil ) continue;
+            if(eyePart==pupil && !(y>=(secR*3) && y <=(secR*4) && x>=(secC*3) && x<=(secC*4))) continue;
+          //  if( (y < (rows/3) || y > (2*rows/3)) && eyePart==pupil ) continue;
+		//	if( (x < (cols/3) || x > (2*cols/3)) && eyePart==pupil ) continue;
             cv::Point center(x,y);
             std::vector<int> lineInt = linearIntegVec(eye, center, radiusRange, eyePart);
             if( find(lineInt.begin(), lineInt.end(), 0) != lineInt.end() )
@@ -207,8 +210,8 @@ void Segmentation::cropPupil(Eye* eye)
         int edge = eye->getIrisRadius()*2;
         eye->setPupilLen(edge);
         CvRect roi = cvRect(xROI, yROI, edge, edge);
-        cv::Mat imgInp = *(eye->getImgInp());
-        cv::Mat pupilROI = imgInp(roi);
+        cv::Mat eyeImg = *(eye->getEyeImg());
+        cv::Mat pupilROI = eyeImg(roi);
         cv::Mat bgr[3];
         cv::split(pupilROI, bgr);
         eye->setPupilROI(&(bgr[2]));

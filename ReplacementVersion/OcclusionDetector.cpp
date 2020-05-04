@@ -387,6 +387,12 @@ void OcclusionDetector::run(Eye* eye)
 			}
 		}
 	}
+	cv::resize(normMask, normMask, cv::Size(NORM_WIDTH, NORM_HEIGHT));
+	eye->setNormMask(&normMask);
+	cv::Mat normImg = *(eye->getNormImg());
+	cv::resize(normImg, normImg, cv::Size(NORM_WIDTH, NORM_HEIGHT));
+	eye->setNormImg(&normImg);
+	// here binMask is modifed in the eye* ptr, so there's no need to re-set the binMask in the eye object.
 	/*cv::imshow("ReflectionMask Show", reflectionMask);
 	cv::imshow("LowEyelidMask Show", lowEyelidMask);
 	cv::imshow("UpEyelidMask Show", upEyelidMask);
@@ -399,4 +405,5 @@ void OcclusionDetector::run(Eye* eye)
 	lowEyelidMask.release();
 	upEyelidMask.release();
 	normMask.release();
+	normImg.release();
 }
