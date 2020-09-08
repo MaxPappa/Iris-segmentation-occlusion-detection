@@ -6,4 +6,4 @@
 #include <opencv2/core/mat.hpp>
 #include "utils.hpp"
 
-int main();
+int main(int argc, char** argv);

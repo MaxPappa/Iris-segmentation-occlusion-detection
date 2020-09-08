@@ -52,7 +52,7 @@ int main(int argc, char** argv)
         return 0;
     }
 
-    boost::filesystem::path dstFolder(current_path().string()+argv[3]);//"/Utiris_Segmented");
+    boost::filesystem::path dstFolder(argv[3]);//"/Utiris_Segmented");
     if(!(boost::filesystem::exists(dstFolder)))
     {
         boost::filesystem::create_directory(dstFolder);
