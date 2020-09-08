@@ -88,7 +88,7 @@ def plotK_CMC(folder_path, k):
 
 
 
-def KFold_Gallery(inpath):
+def KFold_Gallery(inpath, outpath):
 	data = pd.read_csv(inpath, index_col=0)
 	for i in range(1,11,1): # KFold cross val. 10 times in order to achieve some nice results.
 		kf = KFold(n_splits = 5, shuffle = True)
@@ -100,8 +100,8 @@ def KFold_Gallery(inpath):
 		probeTest =  train.index
 		train = train[test.index]
 		#test = test[train.index]
-		calculate_FAR_FRR_KFold(train, test, f"./FAR_FRR_KFOLD_{i}.csv")
-		calculate_CMC_KFold(train, f"./CMC_KFold_{i}.csv")
+		calculate_FAR_FRR_KFold(train, test, f"{outpath}/FAR_FRR_KFOLD_{i}.csv")
+		calculate_CMC_KFold(train, f"{outpath}/CMC_KFold_{i}.csv")
 		print(f"\t{i}/{10} done")
 		
 
